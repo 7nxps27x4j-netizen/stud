@@ -1,0 +1,50 @@
+:root {
+    --bg-color: #0d1117; --text-color: #c9d1d9; --card-bg: #161b22;
+    --border-color: #30363d; --grass-0: #1c2128;
+    /* 사진의 진한 주황/갈색 톤 */
+    --orange-1: #2d1b10; --orange-2: #5c3015; --orange-3: #8c4a1d; --orange-4: #bc6425; --orange-5: #f97316;
+}
+body { margin: 0; background: var(--bg-color); color: var(--text-color); font-family: sans-serif; display: flex; justify-content: center; transition: 0.3s; }
+.dashboard { width: 95%; max-width: 1200px; padding: 20px; }
+
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+.quote-text { flex: 1; text-align: center; font-size: 1.2rem; font-weight: 700; color: #f97316; }
+
+.main-content { display: flex; gap: 20px; align-items: flex-start; }
+.side-panel { flex: 1; display: flex; flex-direction: column; gap: 20px; min-width: 320px; }
+.calendar-panel { flex: 2; }
+
+/* 요약 카드 */
+.summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.stat-card { background: var(--card-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); text-align: center; }
+.stat-card strong { color: #f97316; font-size: 1.1rem; }
+
+/* 스톱워치 디자인 */
+.timer-section { background: var(--card-bg); padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); text-align: center; }
+#stopwatchDisplay { font-size: 3rem; font-weight: 800; margin: 20px 0; font-variant-numeric: tabular-nums; color: #f97316; }
+.timer-controls { display: flex; gap: 10px; }
+.timer-controls button { flex: 1; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+#startBtn { background: #f97316; color: white; }
+#stopBtn { background: #30363d; color: white; }
+
+/* 과목별 목록 */
+.subject-list-section { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); }
+#subjectTimeList { list-style: none; padding: 0; margin: 0; }
+#subjectTimeList li { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-color); font-size: 1.1rem; }
+
+/* 달력 그리드 (2026년 기준) */
+.calendar-grid-header { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: bold; margin-bottom: 10px; opacity: 0.6; }
+.grass-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; background: var(--card-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); }
+.grass-cell { aspect-ratio: 1.2; border-radius: 4px; background: var(--grass-0); border: 1px solid var(--border-color); position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.cell-date { position: absolute; top: 4px; left: 6px; font-size: 11px; font-weight: bold; }
+.cell-time-text { font-size: 0.9rem; font-weight: 800; text-shadow: 1px 1px 2px #000; color: white; margin-top: 10px; }
+
+/* 주황색 단계별 클래스 */
+.lv-1 { background-color: var(--orange-1) !important; }
+.lv-2 { background-color: var(--orange-2) !important; }
+.lv-3 { background-color: var(--orange-3) !important; }
+.lv-4 { background-color: var(--orange-4) !important; }
+.lv-5 { background-color: var(--orange-5) !important; }
+
+/* 테마변경 시 사용할 라이트 모드 컬러 */
+body.light-mode { --bg-color: #f8f9fa; --text-color: #1c1e21; --card-bg: #ffffff; --border-color: #e0e0e0; --grass-0: #eeeeee; }

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스터디 트래커 - 스톱워치 에디션</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-mode">
+    <div class="dashboard">
+        <header>
+            <h1>🔥 STUDY TRACKER</h1>
+            <div id="motivation-quote" class="quote-text">"기적은 노력의 또 다른 이름이다."</div>
+            <button id="themeToggle">테마 변경</button>
+        </header>
+
+        <main class="main-content">
+            <div class="side-panel">
+                <section class="summary">
+                    <div class="stat-card"><span>오늘</span><br><strong id="todayTime">00:00:00</strong></div>
+                    <div class="stat-card"><span>이번 달</span><br><strong id="monthTime">00:00:00</strong></div>
+                    <div class="stat-card"><span>연속 학습일</span><br><strong id="streakCount">0일</strong></div>
+                </section>
+
+                <section class="timer-section">
+                    <select id="subjectSelect">
+                        <option value="국어">국어</option>
+                        <option value="수학">수학</option>
+                        <option value="영어">영어</option>
+                        <option value="과학">과학</option>
+                    </select>
+                    <div id="stopwatchDisplay">00:00:00</div>
+                    <div class="timer-controls">
+                        <button id="startBtn">시작</button>
+                        <button id="stopBtn" disabled>정지 & 저장</button>
+                    </div>
+                </section>
+
+                <section class="subject-list-section">
+                    <h3>오늘의 과목별 기록</h3>
+                    <ul id="subjectTimeList">
+                        </ul>
+                </section>
+            </div>
+
+            <div class="calendar-panel">
+                <section class="calendar-section">
+                    <h3 id="monthTitle">2026년 1월 활동</h3>
+                    <div class="calendar-grid-header">
+                        <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
+                    </div>
+                    <div id="grassContainer" class="grass-grid"></div>
+                </section>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
