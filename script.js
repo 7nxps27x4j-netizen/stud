@@ -218,3 +218,4 @@ function upHChart() {
         options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 10, ticks: {color: isDark ? '#ccc' : '#666'} }, x: { ticks: {color: isDark ? '#ccc' : '#666'} } } }
     });
 }
+
