@@ -9,71 +9,78 @@ body.light-mode {
     --check-border: #000000;
 }
 
-body { margin: 0; background: var(--bg-color); color: var(--text-color); font-family: sans-serif; display: flex; justify-content: center; transition: 0.3s; }
-.dashboard { width: 95%; max-width: 1200px; padding: 20px; }
+body { margin: 0; background: var(--bg-color); color: var(--text-color); font-family: sans-serif; display: flex; justify-content: center; transition: 0.3s; overflow-x: hidden; }
+.dashboard { width: 98%; max-width: 1200px; padding: 15px; box-sizing: border-box; }
 
-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-.quote-text { flex: 1; text-align: center; font-size: 1.2rem; font-weight: 700; color: var(--orange); }
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.quote-text { flex: 1; text-align: center; font-size: 1.1rem; font-weight: 700; color: var(--orange); padding: 0 10px; }
 
-.main-content { display: flex; gap: 20px; align-items: flex-start; }
-.side-panel { flex: 1; display: flex; flex-direction: column; gap: 20px; min-width: 320px; }
+.main-content { display: flex; gap: 15px; align-items: flex-start; }
+.side-panel { flex: 1; display: flex; flex-direction: column; gap: 15px; min-width: 300px; }
 .calendar-panel { flex: 2; }
 
+/* 카드 스타일 공통 */
 .stat-card, .timer-section, .subject-list-section, .grass-grid, .habit-table-wrapper, .graph-box { 
-    background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; 
+    background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; 
 }
 
-/* 스터디 트래커 */
-.summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+/* 스터디 트래커 구성요소 */
+.summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .stat-card { text-align: center; }
-.stat-card strong { color: var(--orange); font-size: 1.1rem; }
-#stopwatchDisplay { font-size: 3.5rem; font-weight: 800; color: var(--orange); text-align: center; margin: 20px 0; font-variant-numeric: tabular-nums; }
-.timer-controls { display: flex; gap: 10px; }
-.timer-controls button { flex: 1; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; color: white; }
+.stat-card strong { color: var(--orange); font-size: 1rem; }
+#stopwatchDisplay { font-size: 3rem; font-weight: 800; color: var(--orange); text-align: center; margin: 15px 0; font-variant-numeric: tabular-nums; }
+.timer-controls { display: flex; gap: 8px; }
+.timer-controls button { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; color: white; }
 #startBtn { background: var(--orange); }
 #stopBtn { background: #30363d; }
 #subjectTimeList { list-style: none; padding: 0; margin: 0; }
-#subjectTimeList li { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-color); font-size: 1.1rem; }
+#subjectTimeList li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-color); font-size: 1rem; }
 
 /* 잔디 시간 크게 */
-.calendar-grid-header { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: bold; margin-bottom: 10px; opacity: 0.6; }
-.grass-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.calendar-grid-header { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: bold; margin-bottom: 8px; opacity: 0.6; font-size: 0.8rem; }
+.grass-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
 .grass-cell { aspect-ratio: 1.2; border-radius: 4px; background: var(--grass-0); border: 1px solid var(--border-color); position: relative; display: flex; align-items: center; justify-content: center; }
-.cell-date { position: absolute; top: 4px; left: 6px; font-size: 11px; font-weight: bold; }
-.cell-time-text { font-size: 1.1rem; font-weight: 900; color: white; margin-top: 10px; text-shadow: 1px 1px 3px #000; }
+.cell-date { position: absolute; top: 3px; left: 5px; font-size: 10px; font-weight: bold; }
+.cell-time-text { font-size: 1rem; font-weight: 900; color: white; margin-top: 8px; text-shadow: 1px 1px 3px #000; }
 
 .lv-1 { background-color: #2d1b10 !important; } .lv-2 { background-color: #5c3015 !important; }
 .lv-3 { background-color: #8c4a1d !important; } .lv-4 { background-color: #bc6425 !important; }
 .lv-5 { background-color: var(--orange) !important; }
 
-/* --- [해빗 트래커 수정] 표는 조금 작게, 그래프는 크게 --- */
-.habit-table-wrapper { overflow-x: auto; padding: 0; margin-bottom: 20px; }
-#habit-page table { border-collapse: collapse; width: 100%; color: var(--text-color); table-layout: fixed; }
+/* --- [해빗 트래커 iPad 최적화] --- */
+.habit-table-wrapper { overflow-x: auto; padding: 0; margin-bottom: 15px; max-height: 350px; } /* 높이 제한 추가 */
+#habit-page table { border-collapse: collapse; width: 100%; color: var(--text-color); table-layout: fixed; min-width: 800px; } /* 가로 스크롤 허용으로 찌그러짐 방지 */
 #habit-page th, #habit-page td { 
     border: 1px solid var(--border-color) !important; 
-    padding: 4px 2px; /* 패딩을 줄여서 표 높이를 압축 */
-    text-align: center; font-size: 11px;
+    padding: 3px 1px; /* 패딩 최소화 */
+    text-align: center; font-size: 10px;
 }
-#habit-page th:first-child, #habit-page td:first-child { width: 130px; text-align: left; padding-left: 8px; }
+#habit-page th:first-child, #habit-page td:first-child { width: 110px; text-align: left; padding-left: 6px; font-size: 11px; }
 
-/* 체크박스 크기 살짝 조절 */
+/* 체크박스 크기 최적화 */
 #habit-page input[type="checkbox"] { 
-    appearance: none; width: 16px; height: 16px; 
-    border: 2px solid var(--check-border); 
+    appearance: none; width: 15px; height: 15px; 
+    border: 1.5px solid var(--check-border); 
     border-radius: 3px; background: var(--card-bg); cursor: pointer; position: relative; 
 }
 #habit-page input[type="checkbox"]:checked { background: var(--orange); border-color: var(--orange); }
-#habit-page input[type="checkbox"]:checked::after { content: '✔'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 9px; }
+#habit-page input[type="checkbox"]:checked::after { content: '✔'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 8px; }
 
 .h-input { border: none; background: transparent; color: var(--text-color); width: 100%; font-size: 11px; font-weight: bold; outline: none; }
 
-/* 그래프 영역 확대 */
-.graph-box { height: 400px; padding: 20px; } /* 높이를 250px에서 400px로 확대 */
+/* 그래프 높이 조절 (iPad에서 한 화면에 보이도록) */
+.graph-box { height: 320px; padding: 10px; } 
 
 /* 공통 UI */
 .page { display: none; } .page.active { display: block; }
-.menu-icon { position: fixed; top: 15px; right: 20px; font-size: 20px; cursor: pointer; z-index: 1000; color: var(--orange); background: var(--card-bg); padding: 5px 10px; border-radius: 5px; border: 1px solid var(--border-color); }
+.menu-icon { position: fixed; top: 15px; right: 20px; font-size: 18px; cursor: pointer; z-index: 1000; color: var(--orange); background: var(--card-bg); padding: 4px 8px; border-radius: 5px; border: 1px solid var(--border-color); }
 .side-menu { position: fixed; top: 0; right: -200px; width: 180px; height: 100%; background: var(--card-bg); transition: 0.3s; z-index: 999; border-left: 1px solid var(--border-color); padding-top: 60px; }
 .side-menu.open { right: 0; }
 .side-menu a { display: block; padding: 12px 20px; color: var(--text-color); text-decoration: none; font-size: 13px; border-bottom: 1px solid var(--border-color); }
-.theme-btn { padding: 5px 10px; border-radius: 5px; background: var(--card-bg); color: var(--text-color); border: 1px solid var(--border-color); cursor: pointer; }
+.theme-btn { padding: 4px 8px; border-radius: 5px; background: var(--card-bg); color: var(--text-color); border: 1px solid var(--border-color); cursor: pointer; font-size: 0.8rem; }
+
+/* 반응형 모바일 대응 */
+@media (max-width: 768px) {
+    .main-content { flex-direction: column; }
+    .side-panel, .calendar-panel { width: 100%; }
+}
