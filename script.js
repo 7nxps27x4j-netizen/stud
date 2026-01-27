@@ -7,18 +7,12 @@ let hData = JSON.parse(localStorage.getItem('hData_V3')) || {
 };
 let hChartObj = null;
 
-// [추가] 동기부여 명언 리스트
 const quotes = [
-    "기적은 노력의 또 다른 이름이다.",
+    "기적은 노력의 또 다른 이름이다.", 
     "오늘 걷지 않으면 내일은 뛰어야 한다.",
-    "할 수 있다고 믿는 사람은 결국 그렇게 된다.",
+    "할 수 있다고 믿는 사람은 결국 그렇게 된다.", 
     "가장 어두운 밤도 결국 끝나고 해가 뜰 것이다.",
-    "공부할 때의 고통은 잠깐이지만, 못 배운 고통은 평생이다.",
-    "꿈을 실현하기에 가장 좋은 날은 바로 오늘이다.",
-    "한 번도 실수를 해보지 않은 사람은 한 번도 새로운 것을 시도한 적이 없다.",
     "성공은 매일 반복되는 작은 노력의 합계다.",
-    "지금 자면 꿈을 꾸지만, 지금 공부하면 꿈을 이룬다.",
-    "성공은 매일 반복되는 작은 노력의 합이다.",
     "할 수 있다고 믿으면 이미 절반은 온 것이다.",
     "당신의 노력이 오늘의 당신을 만든다.",
     "내가 헛되이 보낸 오늘은 어제 죽은 이가 갈망하던 내일이다.",
@@ -43,41 +37,63 @@ const quotes = [
     "어려움이 클수록, 그것을 극복하는 영광도 더욱 커진다.",
     "나는 학교 교육이 내 배움을 방해하도록 두지 않았다.",
     "성공은 대개 그것을 찾을 겨를도 없이 바쁘게 일하는 사람에게 찾아온다.",
-    "가장 확실한 비결은 한 번 더 시도하는 것이다.",
-    "당신의 노력을 믿으세요. 결코 당신을 배신하지 않을 것입니다."];
+    "가장 확실한 비결은 한 번 더 시도하는 것이다."
+];
 
-// 초기화 실행
 window.onload = function() {
-    changeQuote(); // 명언 변경
+    // 1. 페이지 로드 시 이전에 돌던 타이머가 있는지 확인
+    const savedStart = localStorage.getItem('timerStartTime');
+    if (savedStart) {
+        resumeTimer(parseInt(savedStart));
+    }
+    
+    changeQuote();
     updateDisplay();
     render2026Calendar();
     updateSummary();
 };
 
-// [추가] 명언을 랜덤으로 바꾸는 함수
-function changeQuote() {
-    const quoteElement = document.querySelector('.quote-text');
-    if (quoteElement) {
-        const randomIndex = Math.floor(Math.random() * quotes.length);
-        quoteElement.innerText = `"${quotes[randomIndex]}"`;
+// [강력 로직] 화면이 다시 보일 때마다 실제 시간 차이를 계산해서 totalSeconds를 강제 업데이트
+function forceSync() {
+    const savedStart = localStorage.getItem('timerStartTime');
+    if (savedStart && timerInterval) {
+        const now = Date.now();
+        const diff = Math.floor((now - parseInt(savedStart)) / 1000);
+        totalSeconds = diff;
+        document.getElementById('stopwatchDisplay').innerText = formatTime(totalSeconds);
     }
 }
 
-function getTodayStr() {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
-
-function formatTime(s) {
-    const h = Math.floor(s / 3600);
-    const m = Math.floor((s % 3600) / 60);
-    const sc = s % 60;
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sc).padStart(2, '0')}`;
-}
+// 브라우저 탭을 누르거나, 앱으로 돌아올 때 호출됨
+window.addEventListener('focus', forceSync);
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') forceSync();
+});
 
 function startTimer() {
+    // 시작 시점의 실제 '시각(Timestamp)'을 저장
+    // 만약 이미 흐르던 시간이 있다면(totalSeconds > 0), 그만큼을 뺀 시각을 저장
+    const startTime = Date.now() - (totalSeconds * 1000);
+    localStorage.setItem('timerStartTime', startTime.toString());
+
     document.getElementById('startBtn').disabled = true;
     document.getElementById('stopBtn').disabled = false;
+    
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        totalSeconds++;
+        document.getElementById('stopwatchDisplay').innerText = formatTime(totalSeconds);
+    }, 1000);
+}
+
+function resumeTimer(startTime) {
+    const now = Date.now();
+    totalSeconds = Math.floor((now - startTime) / 1000);
+    
+    document.getElementById('startBtn').disabled = true;
+    document.getElementById('stopBtn').disabled = false;
+    
+    if (timerInterval) clearInterval(timerInterval);
     timerInterval = setInterval(() => {
         totalSeconds++;
         document.getElementById('stopwatchDisplay').innerText = formatTime(totalSeconds);
@@ -86,21 +102,46 @@ function startTimer() {
 
 function stopTimer() {
     clearInterval(timerInterval);
+    timerInterval = null;
+    localStorage.removeItem('timerStartTime'); // 저장소 비우기
+
     const today = getTodayStr();
     const subject = document.getElementById('subjectSelect').value;
     if (!dailyData[today]) dailyData[today] = { total: 0, subjects: {} };
+    
     dailyData[today].total += totalSeconds;
     dailyData[today].subjects[subject] = (dailyData[today].subjects[subject] || 0) + totalSeconds;
+    
     localStorage.setItem('studyData_V1', JSON.stringify(dailyData));
+    
     totalSeconds = 0;
     document.getElementById('stopwatchDisplay').innerText = "00:00:00";
     document.getElementById('startBtn').disabled = false;
     document.getElementById('stopBtn').disabled = true;
+    
     updateDisplay();
     render2026Calendar();
     updateSummary();
 }
 
+// --- 보조 함수들 (기존과 동일) ---
+function formatTime(s) {
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sc = s % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sc).padStart(2, '0')}`;
+}
+function getTodayStr() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+function changeQuote() {
+    const quoteElement = document.querySelector('.quote-text');
+    if (quoteElement) {
+        const randomIndex = Math.floor(Math.random() * quotes.length);
+        quoteElement.innerText = `"${quotes[randomIndex]}"`;
+    }
+}
 function updateDisplay() {
     const today = getTodayStr();
     const data = dailyData[today] || { subjects: {} };
@@ -111,41 +152,27 @@ function updateDisplay() {
         list.innerHTML += `<li><span>${sub}</span><strong>${formatTime(time)}</strong></li>`;
     });
 }
-
 function updateSummary() {
     const todayStr = getTodayStr();
     document.getElementById('todayTime').innerText = formatTime(dailyData[todayStr]?.total || 0);
-    
     let monthTotal = 0;
     const currentMonthPrefix = todayStr.substring(0, 7);
     for(const date in dailyData) {
         if(date.startsWith(currentMonthPrefix)) monthTotal += dailyData[date].total;
     }
     document.getElementById('monthTime').innerText = formatTime(monthTotal);
-
-    let streak = 0;
-    let checkDate = new Date();
+    let streak = 0; let checkDate = new Date();
     while (true) {
         let dStr = `${checkDate.getFullYear()}-${String(checkDate.getMonth() + 1).padStart(2, '0')}-${String(checkDate.getDate()).padStart(2, '0')}`;
         if (dailyData[dStr] && dailyData[dStr].total > 0) {
-            streak++;
-            checkDate.setDate(checkDate.getDate() - 1);
-        } else {
-            if (streak === 0) {
-                checkDate.setDate(checkDate.getDate() - 1);
-                let yStr = `${checkDate.getFullYear()}-${String(checkDate.getMonth() + 1).padStart(2, '0')}-${String(checkDate.getDate()).padStart(2, '0')}`;
-                if (dailyData[yStr] && dailyData[yStr].total > 0) continue; 
-            }
-            break;
-        }
+            streak++; checkDate.setDate(checkDate.getDate() - 1);
+        } else break;
     }
     document.getElementById('streakCount').innerText = `${streak}일`;
 }
-
 function render2026Calendar() {
     const container = document.getElementById('grassContainer');
-    if(!container) return;
-    container.innerHTML = "";
+    if(!container) return; container.innerHTML = "";
     const year = 2026, month = new Date().getMonth();
     const firstDay = new Date(year, month, 1).getDay();
     const lastDate = new Date(year, month + 1, 0).getDate();
@@ -159,34 +186,32 @@ function render2026Calendar() {
         if (time > 0) cell.classList.add(`lv-${Math.min(5, Math.ceil(time/3600))}`);
         cell.innerHTML = `<span class="cell-date">${d}</span>`;
         if(time > 0) {
-            const m = Math.floor((time%3600)/60), s = time%60;
-            cell.innerHTML += `<span class="cell-time-text">${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}</span>`;
+            const h = Math.floor(time / 3600);
+            const m = Math.floor((time % 3600) / 60);
+            const s = time % 60;
+            let displayTime = h > 0 ? `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}` : `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            cell.innerHTML += `<span class="cell-time-text">${displayTime}</span>`;
         }
         container.appendChild(cell);
     }
 }
-
 function toggleMenu() { document.getElementById('side-menu').classList.toggle('open'); }
-
 function showPage(id) {
     document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
     document.getElementById(id + '-page').style.display = 'block';
-    changeQuote(); // [추가] 탭을 이동할 때도 명언이 바뀜
+    changeQuote();
     if(id === 'habit') renderH();
     toggleMenu();
 }
-
 function toggleTheme() {
     document.body.classList.toggle('light-mode');
     document.body.classList.toggle('dark-mode');
     if(document.getElementById('habit-page').style.display === 'block') upHChart();
 }
-
 function renderH() {
     const head = document.getElementById('h-date-row');
     if(head.children.length === 1) { for(let i=1; i<=31; i++) head.innerHTML += `<th>${i}</th>`; }
-    const body = document.getElementById('h-body');
-    body.innerHTML = '';
+    const body = document.getElementById('h-body'); body.innerHTML = '';
     for(let i=0; i<10; i++) {
         let tr = document.createElement('tr');
         tr.innerHTML = `<td><input class="h-input" value="${hData.names[i]}" onchange="svH(${i},'n',this.value)" placeholder="습관 입력..."></td>`;
@@ -195,13 +220,11 @@ function renderH() {
     }
     setTimeout(upHChart, 50);
 }
-
 function svH(r, c, v) {
     if(c === 'n') hData.names[r] = v; else hData.checks[r][c] = v;
     localStorage.setItem('hData_V3', JSON.stringify(hData));
     upHChart();
 }
-
 function upHChart() {
     const ctx = document.getElementById('h-chart').getContext('2d');
     const isDark = document.body.classList.contains('dark-mode');
@@ -218,5 +241,3 @@ function upHChart() {
         options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 10, ticks: {color: isDark ? '#ccc' : '#666'} }, x: { ticks: {color: isDark ? '#ccc' : '#666'} } } }
     });
 }
-
-
