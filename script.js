@@ -1,5 +1,7 @@
 let totalSeconds = 0;
 let timerInterval = null;
+let lastCheckTimestamp = Date.now(); // 마지막으로 체크한 시각
+
 let dailyData = JSON.parse(localStorage.getItem('studyData_V1')) || {};
 let hData = JSON.parse(localStorage.getItem('hData_V3')) || { 
     names: Array(10).fill(""), 
@@ -41,7 +43,6 @@ const quotes = [
 ];
 
 window.onload = function() {
-    // 1. 페이지 로드 시 이전에 돌던 타이머가 있는지 확인
     const savedStart = localStorage.getItem('timerStartTime');
     if (savedStart) {
         resumeTimer(parseInt(savedStart));
@@ -51,30 +52,29 @@ window.onload = function() {
     updateDisplay();
     render2026Calendar();
     updateSummary();
+
+    // [강력 로직] 1초마다 백그라운드에서 돌아왔는지 감시 (Watchdog)
+    setInterval(() => {
+        const now = Date.now();
+        const savedStart = localStorage.getItem('timerStartTime');
+        
+        if (savedStart && timerInterval) {
+            // 마지막 체크 시간보다 2초 이상 차이 나면 "나갔다 왔다"고 판단
+            if (now - lastCheckTimestamp > 2000) {
+                const diff = Math.floor((now - parseInt(savedStart)) / 1000);
+                totalSeconds = diff;
+                document.getElementById('stopwatchDisplay').innerText = formatTime(totalSeconds);
+            }
+        }
+        lastCheckTimestamp = now;
+    }, 1000);
 };
 
-// [강력 로직] 화면이 다시 보일 때마다 실제 시간 차이를 계산해서 totalSeconds를 강제 업데이트
-function forceSync() {
-    const savedStart = localStorage.getItem('timerStartTime');
-    if (savedStart && timerInterval) {
-        const now = Date.now();
-        const diff = Math.floor((now - parseInt(savedStart)) / 1000);
-        totalSeconds = diff;
-        document.getElementById('stopwatchDisplay').innerText = formatTime(totalSeconds);
-    }
-}
-
-// 브라우저 탭을 누르거나, 앱으로 돌아올 때 호출됨
-window.addEventListener('focus', forceSync);
-document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') forceSync();
-});
-
 function startTimer() {
-    // 시작 시점의 실제 '시각(Timestamp)'을 저장
-    // 만약 이미 흐르던 시간이 있다면(totalSeconds > 0), 그만큼을 뺀 시각을 저장
+    // 공부를 시작한 시점의 '절대 시각'을 브라우저에 박제합니다.
     const startTime = Date.now() - (totalSeconds * 1000);
     localStorage.setItem('timerStartTime', startTime.toString());
+    lastCheckTimestamp = Date.now();
 
     document.getElementById('startBtn').disabled = true;
     document.getElementById('stopBtn').disabled = false;
@@ -89,6 +89,7 @@ function startTimer() {
 function resumeTimer(startTime) {
     const now = Date.now();
     totalSeconds = Math.floor((now - startTime) / 1000);
+    lastCheckTimestamp = now;
     
     document.getElementById('startBtn').disabled = true;
     document.getElementById('stopBtn').disabled = false;
@@ -103,7 +104,7 @@ function resumeTimer(startTime) {
 function stopTimer() {
     clearInterval(timerInterval);
     timerInterval = null;
-    localStorage.removeItem('timerStartTime'); // 저장소 비우기
+    localStorage.removeItem('timerStartTime');
 
     const today = getTodayStr();
     const subject = document.getElementById('subjectSelect').value;
@@ -124,7 +125,7 @@ function stopTimer() {
     updateSummary();
 }
 
-// --- 보조 함수들 (기존과 동일) ---
+// --- 아래 보조 함수들은 그대로 유지 ---
 function formatTime(s) {
     const h = Math.floor(s / 3600);
     const m = Math.floor((s % 3600) / 60);
