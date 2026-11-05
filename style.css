@@ -20,9 +20,9 @@
 
 html {
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   background-color: var(--bg-color);
-  overflow-y: auto; /* 웹 전체에 자연스러운 스크롤 부여 */
+  overflow-y: auto; /* 웹 전체 스크롤 활성화 */
 }
 
 body {
@@ -32,12 +32,10 @@ body {
   color: var(--text-main);
   font-family: var(--font-family);
   -webkit-font-smoothing: antialiased;
-  /* 상단 상태 표시줄과 겹치지 않도록 위쪽 여백을 넉넉하게 고정 (44px) */
-  padding: 44px 16px 24px 16px;
+  padding: 12px 16px;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  overflow-y: visible;
 }
 
 .app-container {
@@ -46,6 +44,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  /* 상단 상태 표시줄과 밀리지 않도록 컨테이너 상단 여백 부여 */
+  margin-top: 40px; 
 }
 
 .card {
