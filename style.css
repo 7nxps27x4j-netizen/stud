@@ -30,7 +30,8 @@ html, body {
 }
 
 body {
-  padding: 12px 16px;
+  /* 아이패드 홈 화면 상단 상태 표시줄과 겹치지 않도록 안전 영역 패딩 적용 */
+  padding: calc(env(safe-area-inset-top, 24px) + 16px) 16px 12px 16px;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -357,7 +358,6 @@ body {
   padding-right: 4px;
 }
 
-/* 평소에는 투명하게 숨겨두고, 터치하거나 마우스를 올릴 때만 나타나는 스타일 */
 .delete-btn {
   background: none;
   border: none;
@@ -367,16 +367,14 @@ body {
   line-height: 1;
   padding: 2px 5px;
   border-radius: 3px;
-  opacity: 0; /* 평소엔 완전 투명 (안 보임) */
+  opacity: 0;
   transition: opacity 0.2s ease, color 0.2s ease, background-color 0.2s ease;
 }
 
-/* 습관 이름 칸(행)을 터치하거나 마우스 호버 시 ✕ 버튼이 나타남 */
 .habit-name-td:hover .delete-btn {
-  opacity: 0.7; 
+  opacity: 0.7;
 }
 
-/* ✕ 버튼 자체에 터치/마우스가 올라갔을 때 */
 .delete-btn:hover {
   opacity: 1 !important;
   color: #ff5555;
