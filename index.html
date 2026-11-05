@@ -2,8 +2,16 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Habit Tracker Dashboard</title>
+  <!-- 아이패드 사파리 고정 뷰포트 설정 (확대/축소 및 스크롤 방지) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Habit Tracker</title>
+
+  <!-- iOS 홈 화면 앱 아이콘 & 풀스크린 설정 -->
+  <meta name="apple-mobile-web-app-title" content="Habit Tracker">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="icon.png"> <!-- 💡 원하시는 표지 이미지 파일명 지정 -->
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -14,7 +22,7 @@
   <div class="app-container">
     <!-- Top Overview Section -->
     <section class="overview-grid">
-      <!-- 1. Integrated Month Overview & Interactive Date Selector -->
+      <!-- Month Overview -->
       <div class="card stats-summary">
         <div class="summary-header">
           <div class="title-with-badge">
@@ -46,7 +54,7 @@
         </div>
       </div>
 
-      <!-- 2. Today Card -->
+      <!-- Today Card -->
       <div class="card gauge-card">
         <div class="card-header-left">
           <h3>Today</h3>
@@ -63,7 +71,7 @@
         </div>
       </div>
 
-      <!-- 3. This Week Card -->
+      <!-- This Week Card -->
       <div class="card gauge-card">
         <div class="card-header-left">
           <h3>This week</h3>
@@ -74,7 +82,7 @@
         </div>
       </div>
 
-      <!-- 4. Month Overall Card -->
+      <!-- Month Overall Card -->
       <div class="card gauge-card">
         <div class="card-header-left">
           <h3>Month overall</h3>
@@ -110,7 +118,6 @@
         </table>
       </div>
 
-      <!-- Left Bottom Legend -->
       <div class="matrix-footer">
         <div class="legend">
           <span><i class="legend-icon icon-completed">✓</i> Completed</span>
