@@ -18,24 +18,24 @@
   -webkit-touch-callout: none;
 }
 
+/* 스크롤이 막히지 않도록 높이 제한 해제 */
 html {
-  width: 100%;
-  min-height: 100%;
   background-color: var(--bg-color);
-  overflow-y: auto; /* 웹 전체 스크롤 활성화 */
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 
 body {
-  width: 100%;
-  min-height: 100vh;
   background-color: var(--bg-color);
   color: var(--text-main);
   font-family: var(--font-family);
   -webkit-font-smoothing: antialiased;
-  padding: 12px 16px;
+  /* 상단 상태 표시줄과 겹치지 않도록 위쪽 여백 45px 확보 및 자연스러운 스크롤 허용 */
+  padding: 45px 16px 40px 16px;
   display: flex;
   justify-content: center;
   align-items: flex-start;
+  overflow-y: visible;
 }
 
 .app-container {
@@ -44,8 +44,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  /* 상단 상태 표시줄과 밀리지 않도록 컨테이너 상단 여백 부여 */
-  margin-top: 40px; 
 }
 
 .card {
