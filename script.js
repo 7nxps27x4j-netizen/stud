@@ -262,7 +262,7 @@ window.deleteHabit = function(id) {
     renderMatrix();
     updateAll();
   }
-}
+};
 
 function updateAll() {
   const daysCount = getDaysInMonth(currentYear, currentMonth);
