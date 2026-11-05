@@ -1,1 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <!-- 아이패드 사파리 고정 뷰포트 및 풀스크린 설정 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Habit Tracker Dashboard</title>
 
+  <!-- iOS 홈 화면 앱 아이콘 & 풀스크린 웹앱 설정 -->
+  <meta name="apple-mobile-web-app-title" content="Habit Tracker">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="icon.jpg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Overview Section -->
+    <section class="overview-grid">
+      <!-- 1. Integrated Month Overview & Interactive Date Selector -->
+      <div class="card stats-summary">
+        <div class="summary-header">
+          <div class="title-with-badge">
+            <p class="subtitle">Month overview</p>
+            <span class="readonly-badge" id="readOnlyBadge" style="display: none;">READ ONLY</span>
+          </div>
+          <div class="date-selector">
+            <select id="monthSelect" class="date-dropdown month-dropdown"></select>
+            <select id="yearSelect" class="date-dropdown year-dropdown"></select>
+          </div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-label">Days tracked</span>
+            <span class="stat-value" id="daysTracked">31</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Active habits</span>
+            <span class="stat-value" id="activeHabitsCount">8</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Perfect days</span>
+            <span class="stat-value" id="perfectDays">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Avg done / day</span>
+            <span class="stat-value" id="avgDone">0.0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Today Card -->
+      <div class="card gauge-card">
+        <div class="card-header-left">
+          <h3>Today</h3>
+          <div class="header-percent" id="todayPercent">0%</div>
+        </div>
+        <div class="gauge-body">
+          <div class="ring-container">
+            <svg class="ring-svg" viewBox="0 0 100 100">
+              <circle class="ring-bg" cx="50" cy="50" r="38"></circle>
+              <circle class="ring-fill" id="todayRing" cx="50" cy="50" r="38"></circle>
+            </svg>
+          </div>
+          <p class="sub-info" id="todaySub">0/0 habits</p>
+        </div>
+      </div>
+
+      <!-- 3. This Week Card -->
+      <div class="card gauge-card">
+        <div class="card-header-left">
+          <h3>This week</h3>
+          <div class="header-percent" id="weekPercent">0%</div>
+        </div>
+        <div class="gauge-body width-full">
+          <div class="weekly-bars" id="weeklyBars"></div>
+        </div>
+      </div>
+
+      <!-- 4. Month Overall Card -->
+      <div class="card gauge-card">
+        <div class="card-header-left">
+          <h3>Month overall</h3>
+          <div class="header-percent" id="monthPercent">0%</div>
+        </div>
+        <div class="gauge-body">
+          <div class="ring-container">
+            <svg class="ring-svg" viewBox="0 0 100 100">
+              <circle class="ring-bg" cx="50" cy="50" r="38"></circle>
+              <circle class="ring-fill" id="monthRing" cx="50" cy="50" r="38"></circle>
+            </svg>
+          </div>
+          <p class="sub-info" id="monthSub">0 of 0 scheduled</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Habit Matrix -->
+    <section class="card matrix-section">
+      <div class="section-header">
+        <h2>Habit matrix</h2>
+        <button class="add-btn" id="addHabitBtn">+ New Habit</button>
+      </div>
+
+      <div class="matrix-wrapper">
+        <table class="matrix-table">
+          <thead>
+            <tr id="matrixHeaderDays">
+              <th class="habit-col-head">MY HABITS</th>
+            </tr>
+          </thead>
+          <tbody id="matrixBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Left Bottom Legend -->
+      <div class="matrix-footer">
+        <div class="legend">
+          <span><i class="legend-icon icon-completed">✓</i> Completed</span>
+          <span><i class="legend-icon icon-missed"></i> Missed</span>
+          <span><i class="legend-icon icon-not-scheduled">•</i> Not scheduled</span>
+          <span><i class="legend-icon icon-upcoming"></i> Upcoming</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom Analytics Grid -->
+    <section class="analytics-grid">
+      <div class="card chart-card">
+        <div class="card-header-flex">
+          <h3>Consistency trend</h3>
+          <div class="right-labels">
+            <span class="trend-label-item">
+              <i class="trend-dot"></i> Daily completion
+            </span>
+            <span class="card-month-tag" id="chartMonthTag">OCTOBER</span>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="trendChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card analysis-card">
+        <div class="card-header-flex">
+          <h3>Habit analysis</h3>
+          <span class="card-month-tag" id="analysisMonthTag">OCTOBER</span>
+        </div>
+        <div class="analysis-list scroll-hidden" id="analysisList"></div>
+      </div>
+
+      <div class="card top-card">
+        <div class="card-header-flex">
+          <h3>Top habits</h3>
+          <span class="card-month-tag" id="topMonthTag">OCTOBER</span>
+        </div>
+        <div class="top-list scroll-hidden" id="topList"></div>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
