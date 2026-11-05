@@ -5,7 +5,7 @@
   --text-main: #ffffff;
   --text-muted: #666666;
   --text-sub: #ffffff;
-  --accent-color: #2DD4BF; /* 🎨 원하는 색상으로 직접 수정 가능 */
+  --accent-color: #2DD4BF;
   --missed-bg: #141414;
   --empty-cell: #121212;
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -18,48 +18,44 @@
   -webkit-touch-callout: none;
 }
 
-/* 아이패드 화면 스크롤 절대 방지 */
 html, body {
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
-  overflow: hidden !important;
-  position: fixed;
-  top: 0;
-  left: 0;
+  width: 100%;
+  min-height: 100vh;
   background-color: var(--bg-color);
   color: var(--text-main);
   font-family: var(--font-family);
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  overflow-y: auto; /* 화면 높이가 부족할 때 자연스럽게 스크롤 되도록 변경 */
 }
 
 body {
-  padding: 8px 12px;
+  padding: 12px 16px;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .app-container {
   width: 100%;
-  height: 100%;
   max-width: 1280px;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  gap: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
+/* Card Common Styling */
 .card {
   background-color: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: 8px;
-  padding: 8px 10px;
+  padding: 12px 14px;
 }
 
 .card h3,
 .section-header h2,
 .summary-header .subtitle {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-sub);
   font-weight: 500;
   letter-spacing: -0.01em;
@@ -70,7 +66,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 
 .card-header-flex h3 {
@@ -78,20 +74,21 @@ body {
 }
 
 .card-month-tag {
-  font-size: 8.5px;
+  font-size: 9px;
   font-weight: 600;
   color: var(--text-muted);
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
-/* 1. 상단 개요 카드 */
+/* Overview Section Layout */
 .overview-grid {
   display: grid;
   grid-template-columns: 1.2fr 1fr 1fr 1fr;
-  gap: 8px;
+  gap: 10px;
 }
 
+/* Integrated Stats Summary Card */
 .stats-summary {
   display: flex;
   flex-direction: column;
@@ -99,7 +96,7 @@ body {
 }
 
 .summary-header {
-  padding-bottom: 4px;
+  padding-bottom: 6px;
   border-bottom: 1px solid #1a1a1a;
 }
 
@@ -110,7 +107,7 @@ body {
 }
 
 .readonly-badge {
-  font-size: 7.5px;
+  font-size: 8px;
   font-weight: 700;
   background-color: #222;
   color: #888;
@@ -118,11 +115,12 @@ body {
   border-radius: 3px;
 }
 
+/* Interactive Date Selectors */
 .date-selector {
   display: flex;
-  gap: 4px;
+  gap: 6px;
   align-items: baseline;
-  margin-top: 1px;
+  margin-top: 2px;
 }
 
 .date-dropdown {
@@ -137,7 +135,7 @@ body {
 }
 
 .month-dropdown {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--text-main);
 }
@@ -147,7 +145,7 @@ body {
 }
 
 .year-dropdown {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 400;
   color: var(--text-muted);
 }
@@ -155,8 +153,8 @@ body {
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 4px;
-  padding-top: 4px;
+  gap: 6px;
+  padding-top: 6px;
 }
 
 .stat-item {
@@ -165,20 +163,22 @@ body {
 }
 
 .stat-label {
-  font-size: 8px;
+  font-size: 9px;
   color: var(--text-muted);
 }
 
 .stat-value {
-  font-size: 13.5px;
+  font-size: 15px;
   font-weight: 700;
-  margin-top: 0px;
+  margin-top: 2px;
 }
 
+/* Gauge Cards */
 .gauge-card {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: flex-start;
 }
 
 .card-header-left {
@@ -189,9 +189,10 @@ body {
 }
 
 .header-percent {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--text-main);
+  letter-spacing: -0.02em;
 }
 
 .gauge-body {
@@ -207,8 +208,8 @@ body {
 
 .ring-container {
   position: relative;
-  width: 38px;
-  height: 38px;
+  width: 46px;
+  height: 46px;
 }
 
 .ring-svg {
@@ -234,29 +235,31 @@ body {
 }
 
 .sub-info {
-  font-size: 8.5px;
+  font-size: 9.5px;
   color: var(--text-muted);
-  margin-top: 1px;
+  margin-top: 4px;
 }
 
+/* Weekly Bars */
 .weekly-bars {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   width: 100%;
-  height: 28px;
+  height: 36px;
+  margin-top: 4px;
 }
 
 .bar-col {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
 }
 
 .bar-bg {
-  width: 10px;
-  height: 20px;
+  width: 12px;
+  height: 26px;
   background-color: #181818;
   border-radius: 2px;
   display: flex;
@@ -271,41 +274,37 @@ body {
 }
 
 .bar-label {
-  font-size: 8px;
+  font-size: 8.5px;
   color: var(--text-muted);
 }
 
-/* 2. 중앙 매트릭스 */
+/* Matrix Section */
 .matrix-section {
-  padding: 8px 10px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  min-height: 0;
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2px;
+  margin-bottom: 8px;
 }
 
 .add-btn {
   background-color: var(--accent-color);
   color: #000;
   border: none;
-  padding: 2px 6px;
-  border-radius: 3px;
-  font-size: 9px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 10px;
   font-weight: 600;
   cursor: pointer;
 }
 
 .matrix-wrapper {
-  flex: 1;
   overflow-x: auto;
-  overflow-y: auto;
   scrollbar-width: none;
 }
 
@@ -316,13 +315,13 @@ body {
 .matrix-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .matrix-table th, .matrix-table td {
-  padding: 1px 0px;
+  padding: 4px 0px;
   text-align: center;
-  min-width: 20px;
+  min-width: 22px;
 }
 
 .header-day-cell {
@@ -332,35 +331,37 @@ body {
 }
 
 .day-name {
-  font-size: 7.5px;
+  font-size: 8px;
   color: #444444;
+  font-weight: 500;
+  text-transform: uppercase;
 }
 
 .day-number {
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .day-number.is-today-num {
   color: var(--accent-color);
   font-weight: 800;
-  background-color: rgba(226, 241, 99, 0.15);
-  padding: 0px 3px;
+  background-color: rgba(204, 255, 0, 0.15);
+  padding: 1px 4px;
   border-radius: 2px;
 }
 
 .habit-col-head, .habit-name-td {
   text-align: left !important;
-  min-width: 120px !important;
+  min-width: 130px !important;
   color: #cccccc;
   font-weight: 500;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .habit-name-td {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-right: 4px;
+  padding-right: 8px;
 }
 
 .delete-btn {
@@ -368,7 +369,7 @@ body {
   border: none;
   color: #444;
   cursor: pointer;
-  font-size: 8px;
+  font-size: 9px;
   display: none;
 }
 
@@ -379,19 +380,20 @@ body {
 .matrix-table th {
   color: var(--text-muted);
   font-weight: 500;
-  padding-bottom: 2px;
+  padding-bottom: 6px;
 }
 
+/* Matrix Cell States */
 .cell-btn {
-  width: 15px;
-  height: 15px;
-  border-radius: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
-  font-size: 9px;
+  font-size: 10px;
   user-select: none;
   background-color: transparent;
   border: none;
@@ -399,46 +401,48 @@ body {
 
 .cell-btn.status-completed { color: var(--accent-color); font-weight: bold; }
 .cell-btn.status-missed { background-color: var(--missed-bg); }
-.cell-btn.status-not-scheduled { color: #444444; font-size: 10px; }
+.cell-btn.status-not-scheduled { color: #444444; font-size: 11px; }
 .cell-btn.status-upcoming { background-color: var(--empty-cell); border: 1px solid #1a1a1a; }
 
+/* Matrix Footer Legend */
 .matrix-footer {
-  margin-top: 2px;
+  margin-top: 10px;
   display: flex;
 }
 
 .legend {
   display: flex;
-  gap: 10px;
-  font-size: 8.5px;
+  gap: 12px;
+  font-size: 9.5px;
   color: var(--text-muted);
 }
 
 .legend span {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
 }
 
 .legend-icon {
-  width: 10px;
-  height: 10px;
-  font-size: 8px;
+  font-style: normal;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 11px;
+  height: 11px;
+  font-size: 8px;
 }
 
 .legend-icon.icon-completed { color: var(--accent-color); font-weight: bold; }
 .legend-icon.icon-missed { background: var(--missed-bg); border-radius: 2px; }
-.legend-icon.icon-not-scheduled { color: #444; font-size: 10px; }
+.legend-icon.icon-not-scheduled { color: #444; font-size: 11px; }
 .legend-icon.icon-upcoming { background: var(--empty-cell); border: 1px solid #1a1a1a; border-radius: 2px; }
 
-/* 3. 하단 차트 섹션 */
+/* Analytics Grid */
 .analytics-grid {
   display: grid;
   grid-template-columns: 1.4fr 1fr 1fr;
-  gap: 8px;
+  gap: 10px;
 }
 
 .right-labels {
@@ -450,26 +454,26 @@ body {
 .trend-label-item {
   display: flex;
   align-items: center;
-  gap: 3px;
-  font-size: 8.5px;
+  gap: 4px;
+  font-size: 9.5px;
   color: #ffffff;
 }
 
 .trend-dot {
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
   background-color: var(--accent-color);
   border-radius: 50%;
 }
 
 .chart-wrapper {
   position: relative;
-  height: 75px;
+  height: 110px;
   width: 100%;
 }
 
 .scroll-hidden {
-  max-height: 75px;
+  max-height: 110px;
   overflow-y: auto;
   scrollbar-width: none;
 }
@@ -481,25 +485,25 @@ body {
 .analysis-list, .top-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .analysis-item {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
 }
 
 .analysis-item-head {
   display: flex;
   justify-content: space-between;
-  font-size: 8.5px;
+  font-size: 9.5px;
   color: #bbb;
 }
 
 .progress-bg {
   width: 100%;
-  height: 3px;
+  height: 4px;
   background-color: #181818;
   border-radius: 2px;
   overflow: hidden;
@@ -515,24 +519,24 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .top-left {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .top-rank {
   color: var(--text-muted);
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 600;
 }
 
 .top-stats {
   text-align: right;
-  font-size: 8.5px;
+  font-size: 9.5px;
 }
 
 .top-percent {
@@ -541,6 +545,6 @@ body {
 }
 
 .top-count {
-  font-size: 8px;
+  font-size: 8.5px;
   color: var(--text-muted);
 }
