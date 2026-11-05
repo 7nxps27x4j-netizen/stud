@@ -30,8 +30,8 @@ html, body {
 }
 
 body {
-  /* 아이패드 홈 화면 상단 상태 표시줄과 겹치지 않도록 안전 영역 패딩 적용 */
-  padding: calc(env(safe-area-inset-top, 24px) + 16px) 16px 12px 16px;
+  /* 아이패드 홈 화면 상태 표시줄과 겹치지 않도록 상단 여백을 36px로 고정 확보 */
+  padding: 36px 16px 12px 16px;
   display: flex;
   justify-content: center;
   align-items: flex-start;
