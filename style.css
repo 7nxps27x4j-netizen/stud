@@ -5,7 +5,7 @@
   --text-main: #ffffff;
   --text-muted: #666666;
   --text-sub: #ffffff;
-  --accent-color: #2DD4BF; /* 🎨 원하는 포인트 컬러로 변경 가능 */
+  --accent-color: #2DD4BF; /* 🎨 원하시는 컬러 코드 */
   --missed-bg: #141414;
   --empty-cell: #121212;
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -17,12 +17,11 @@
   padding: 0;
 }
 
-/* 화면 스크롤 금지 및 전체 높이 제한 (아이패드 사파리 dvh 대응) */
+/* 아이패드 화면에 딱 맞게 스크롤 없이 고정 */
 html, body {
-  width: 100%;
-  height: 100%;
-  height: 100dvh;
-  overflow: hidden; 
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
   background-color: var(--bg-color);
   color: var(--text-main);
   font-family: var(--font-family);
@@ -30,37 +29,34 @@ html, body {
 }
 
 body {
-  padding: 16px;
+  padding: 10px 14px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-/* 3단 구성을 높이에 맞게 세분화 (100dvh 안에서 스크롤 없이 딱 맞춤) */
 .app-container {
   width: 100%;
   height: 100%;
   max-width: 1280px;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  gap: 12px;
-}
-
-/* Card Common Styling */
-.card {
-  background-color: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: 14px 16px; /* 여백을 좁혀서 공간 확보 */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 8px;
+}
+
+/* 카드 공통 스타일 (패딩 대폭 축소) */
+.card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 10px 12px;
 }
 
 .card h3,
 .section-header h2,
 .summary-header .subtitle {
-  font-size: 11px;
+  font-size: 10.5px;
   color: var(--text-sub);
   font-weight: 500;
   letter-spacing: -0.01em;
@@ -71,7 +67,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .card-header-flex h3 {
@@ -86,11 +82,11 @@ body {
   text-transform: uppercase;
 }
 
-/* 1. 상단 Overview 구획 */
+/* 1. 상단 개요 섹션 (4개 카드) */
 .overview-grid {
   display: grid;
-  grid-template-columns: 1.2fr 1fr 1fr 1fr;
-  gap: 10px;
+  grid-template-columns: 1.3fr 0.9fr 0.9fr 0.9fr;
+  gap: 8px;
 }
 
 .stats-summary {
@@ -100,7 +96,7 @@ body {
 }
 
 .summary-header {
-  padding-bottom: 8px;
+  padding-bottom: 6px;
   border-bottom: 1px solid #1a1a1a;
 }
 
@@ -115,8 +111,8 @@ body {
   font-weight: 700;
   background-color: #222;
   color: #888;
-  padding: 2px 5px;
-  border-radius: 4px;
+  padding: 1px 4px;
+  border-radius: 3px;
 }
 
 .date-selector {
@@ -134,12 +130,11 @@ body {
   outline: none;
   padding: 0;
   -webkit-appearance: none;
-  -moz-appearance: none;
   appearance: none;
 }
 
 .month-dropdown {
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--text-main);
 }
@@ -157,8 +152,8 @@ body {
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  padding-top: 8px;
+  gap: 6px;
+  padding-top: 6px;
 }
 
 .stat-item {
@@ -167,14 +162,14 @@ body {
 }
 
 .stat-label {
-  font-size: 9px;
+  font-size: 8.5px;
   color: var(--text-muted);
 }
 
 .stat-value {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
-  margin-top: 1px;
+  margin-top: 0px;
 }
 
 .gauge-card {
@@ -188,11 +183,11 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 2px;
+  gap: 1px;
 }
 
 .header-percent {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--text-main);
 }
@@ -202,7 +197,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .gauge-body.width-full {
@@ -211,8 +206,8 @@ body {
 
 .ring-container {
   position: relative;
-  width: 54px;
-  height: 54px;
+  width: 44px;
+  height: 44px;
 }
 
 .ring-svg {
@@ -238,9 +233,9 @@ body {
 }
 
 .sub-info {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--text-muted);
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .weekly-bars {
@@ -248,21 +243,21 @@ body {
   justify-content: space-between;
   align-items: flex-end;
   width: 100%;
-  height: 42px;
+  height: 34px;
 }
 
 .bar-col {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
 }
 
 .bar-bg {
-  width: 12px;
-  height: 30px;
+  width: 11px;
+  height: 24px;
   background-color: #181818;
-  border-radius: 3px;
+  border-radius: 2px;
   display: flex;
   align-items: flex-end;
   overflow: hidden;
@@ -270,46 +265,45 @@ body {
 
 .bar-fill {
   width: 100%;
-  border-radius: 3px;
+  border-radius: 2px;
   transition: height 0.3s ease;
 }
 
 .bar-label {
-  font-size: 9px;
+  font-size: 8.5px;
   color: var(--text-muted);
 }
 
-/* 2. 중앙 Habit Matrix 구획 (높이 가변) */
+/* 2. 중앙 해빗 매트릭스 */
 .matrix-section {
-  padding: 14px 16px;
+  padding: 10px 14px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 0; /* flex 자식 스크롤 영역 문제 방지 */
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .add-btn {
   background-color: var(--accent-color);
   color: #000;
   border: none;
-  padding: 4px 10px;
-  border-radius: 5px;
-  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 9.5px;
   font-weight: 600;
   cursor: pointer;
 }
 
 .matrix-wrapper {
-  flex: 1;
   overflow-x: auto;
   overflow-y: auto;
+  max-height: 220px;
   scrollbar-width: none;
 }
 
@@ -320,13 +314,13 @@ body {
 .matrix-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 10px;
+  font-size: 9.5px;
 }
 
 .matrix-table th, .matrix-table td {
-  padding: 4px 1px;
+  padding: 2px 1px;
   text-align: center;
-  min-width: 24px;
+  min-width: 22px;
 }
 
 .header-day-cell {
@@ -339,34 +333,33 @@ body {
 .day-name {
   font-size: 8px;
   color: #444444;
-  font-weight: 500;
 }
 
 .day-number {
-  font-size: 10px;
+  font-size: 9.5px;
 }
 
 .day-number.is-today-num {
   color: var(--accent-color);
   font-weight: 800;
   background-color: rgba(226, 241, 99, 0.15);
-  padding: 1px 4px;
-  border-radius: 3px;
+  padding: 1px 3px;
+  border-radius: 2px;
 }
 
 .habit-col-head, .habit-name-td {
   text-align: left !important;
-  min-width: 140px !important;
+  min-width: 130px !important;
   color: #cccccc;
   font-weight: 500;
-  font-size: 11px;
+  font-size: 10.5px;
 }
 
 .habit-name-td {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-right: 8px;
+  padding-right: 6px;
 }
 
 .delete-btn {
@@ -374,7 +367,7 @@ body {
   border: none;
   color: #444;
   cursor: pointer;
-  font-size: 9px;
+  font-size: 8.5px;
   display: none;
 }
 
@@ -385,19 +378,19 @@ body {
 .matrix-table th {
   color: var(--text-muted);
   font-weight: 500;
-  padding-bottom: 8px;
+  padding-bottom: 4px;
 }
 
 .cell-btn {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 3px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
-  font-size: 10px;
+  font-size: 9.5px;
   user-select: none;
   background-color: transparent;
   border: none;
@@ -405,18 +398,18 @@ body {
 
 .cell-btn.status-completed { color: var(--accent-color); font-weight: bold; }
 .cell-btn.status-missed { background-color: var(--missed-bg); }
-.cell-btn.status-not-scheduled { color: #444444; font-size: 12px; }
+.cell-btn.status-not-scheduled { color: #444444; font-size: 11px; }
 .cell-btn.status-upcoming { background-color: var(--empty-cell); border: 1px solid #1a1a1a; }
 
 .matrix-footer {
-  margin-top: 8px;
+  margin-top: 4px;
   display: flex;
 }
 
 .legend {
   display: flex;
   gap: 12px;
-  font-size: 10px;
+  font-size: 9.5px;
   color: var(--text-muted);
 }
 
@@ -427,9 +420,9 @@ body {
 }
 
 .legend-icon {
-  width: 12px;
-  height: 12px;
-  font-size: 9px;
+  width: 11px;
+  height: 11px;
+  font-size: 8.5px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -437,27 +430,27 @@ body {
 
 .legend-icon.icon-completed { color: var(--accent-color); font-weight: bold; }
 .legend-icon.icon-missed { background: var(--missed-bg); border-radius: 2px; }
-.legend-icon.icon-not-scheduled { color: #444; font-size: 12px; }
+.legend-icon.icon-not-scheduled { color: #444; font-size: 11px; }
 .legend-icon.icon-upcoming { background: var(--empty-cell); border: 1px solid #1a1a1a; border-radius: 2px; }
 
-/* 3. 하단 Analytics 구획 */
+/* 3. 하단 분석 섹션 */
 .analytics-grid {
   display: grid;
   grid-template-columns: 1.4fr 1fr 1fr;
-  gap: 10px;
+  gap: 8px;
 }
 
 .right-labels {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .trend-label-item {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 9.5px;
+  font-size: 9px;
   color: #ffffff;
 }
 
@@ -470,12 +463,12 @@ body {
 
 .chart-wrapper {
   position: relative;
-  height: 110px; /* 차트 높이 축소로 전체 높이 딱 맞춤 */
+  height: 85px;
   width: 100%;
 }
 
 .scroll-hidden {
-  max-height: 110px;
+  max-height: 85px;
   overflow-y: auto;
   scrollbar-width: none;
 }
@@ -487,7 +480,7 @@ body {
 .analysis-list, .top-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .analysis-item {
@@ -499,13 +492,13 @@ body {
 .analysis-item-head {
   display: flex;
   justify-content: space-between;
-  font-size: 10px;
+  font-size: 9.5px;
   color: #bbb;
 }
 
 .progress-bg {
   width: 100%;
-  height: 4px;
+  height: 3.5px;
   background-color: #181818;
   border-radius: 2px;
   overflow: hidden;
@@ -521,24 +514,24 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 10.5px;
+  font-size: 10px;
 }
 
 .top-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .top-rank {
   color: var(--text-muted);
-  font-size: 9px;
+  font-size: 8.5px;
   font-weight: 600;
 }
 
 .top-stats {
   text-align: right;
-  font-size: 10px;
+  font-size: 9.5px;
 }
 
 .top-percent {
@@ -547,6 +540,6 @@ body {
 }
 
 .top-count {
-  font-size: 9px;
+  font-size: 8.5px;
   color: var(--text-muted);
 }
