@@ -31,7 +31,6 @@ let historySnapshots = JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORY)) || 
 
 let trendChartInstance = null;
 
-// CSS 루트 변수(--accent-color) 값을 가져오는 헬퍼 함수
 function getAccentColor() {
   return getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
 }
@@ -471,7 +470,7 @@ function initChart() {
       datasets: [{
         label: 'Daily completion',
         data: [],
-        borderColor: accentColor, // CSS 변수와 연동된 라인 색상
+        borderColor: accentColor,
         borderWidth: 2,
         tension: 0.35,
         pointRadius: 0
@@ -502,7 +501,6 @@ function initChart() {
 function updateChartData() {
   if (!trendChartInstance) return;
 
-  // 차트 생성 후 색상도 최신 CSS 변수값으로 동기화
   trendChartInstance.data.datasets[0].borderColor = getAccentColor();
 
   const daysCount = getDaysInMonth(currentYear, currentMonth);
