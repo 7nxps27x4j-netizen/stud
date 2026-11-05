@@ -5,7 +5,7 @@
   --text-main: #ffffff;
   --text-muted: #666666;
   --text-sub: #ffffff;
-  --accent-color: #2DD4BF; /* 🎨 이 색상 하나만 바꾸면 모든 포인트 컬러가 연동됩니다! (원하시는 코드 입력) */
+  --accent-color: #2DD4BF; /* 🎨 원하는 포인트 컬러로 변경 가능 */
   --missed-bg: #141414;
   --empty-cell: #121212;
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -17,22 +17,33 @@
   padding: 0;
 }
 
-body {
+/* 화면 스크롤 금지 및 전체 높이 제한 (아이패드 사파리 dvh 대응) */
+html, body {
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden; 
   background-color: var(--bg-color);
   color: var(--text-main);
   font-family: var(--font-family);
-  padding: 32px 24px;
-  display: flex;
-  justify-content: center;
   -webkit-font-smoothing: antialiased;
 }
 
+body {
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 3단 구성을 높이에 맞게 세분화 (100dvh 안에서 스크롤 없이 딱 맞춤) */
 .app-container {
   width: 100%;
-  max-width: 1240px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  height: 100%;
+  max-width: 1280px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 12px;
 }
 
 /* Card Common Styling */
@@ -40,7 +51,10 @@ body {
   background-color: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: 12px;
-  padding: 20px;
+  padding: 14px 16px; /* 여백을 좁혀서 공간 확보 */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .card h3,
@@ -57,7 +71,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 .card-header-flex h3 {
@@ -65,21 +79,20 @@ body {
 }
 
 .card-month-tag {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
   color: var(--text-muted);
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
-/* Overview Section Layout */
+/* 1. 상단 Overview 구획 */
 .overview-grid {
   display: grid;
   grid-template-columns: 1.2fr 1fr 1fr 1fr;
-  gap: 14px;
+  gap: 10px;
 }
 
-/* Integrated Stats Summary Card */
 .stats-summary {
   display: flex;
   flex-direction: column;
@@ -87,7 +100,7 @@ body {
 }
 
 .summary-header {
-  padding-bottom: 12px;
+  padding-bottom: 8px;
   border-bottom: 1px solid #1a1a1a;
 }
 
@@ -98,21 +111,19 @@ body {
 }
 
 .readonly-badge {
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 700;
   background-color: #222;
   color: #888;
-  padding: 2px 6px;
+  padding: 2px 5px;
   border-radius: 4px;
-  letter-spacing: 0.05em;
 }
 
-/* Interactive Date Selectors */
 .date-selector {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   align-items: baseline;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .date-dropdown {
@@ -128,7 +139,7 @@ body {
 }
 
 .month-dropdown {
-  font-size: 19px;
+  font-size: 17px;
   font-weight: 700;
   color: var(--text-main);
 }
@@ -138,26 +149,16 @@ body {
 }
 
 .year-dropdown {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 400;
   color: var(--text-muted);
-}
-
-.year-dropdown:hover {
-  color: var(--text-sub);
-}
-
-.date-dropdown option {
-  background-color: #121212;
-  color: #ffffff;
-  font-size: 14px;
 }
 
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  padding-top: 12px;
+  gap: 8px;
+  padding-top: 8px;
 }
 
 .stat-item {
@@ -166,22 +167,20 @@ body {
 }
 
 .stat-label {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--text-muted);
 }
 
 .stat-value {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
-/* Gauge Cards */
 .gauge-card {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: flex-start;
 }
 
 .card-header-left {
@@ -193,10 +192,9 @@ body {
 }
 
 .header-percent {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--text-main);
-  letter-spacing: -0.02em;
 }
 
 .gauge-body {
@@ -204,7 +202,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .gauge-body.width-full {
@@ -213,8 +211,8 @@ body {
 
 .ring-container {
   position: relative;
-  width: 68px;
-  height: 68px;
+  width: 54px;
+  height: 54px;
 }
 
 .ring-svg {
@@ -240,31 +238,29 @@ body {
 }
 
 .sub-info {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-muted);
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
-/* Weekly Bars */
 .weekly-bars {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   width: 100%;
-  height: 52px;
-  margin-top: 10px;
+  height: 42px;
 }
 
 .bar-col {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .bar-bg {
-  width: 14px;
-  height: 38px;
+  width: 12px;
+  height: 30px;
   background-color: #181818;
   border-radius: 3px;
   display: flex;
@@ -279,48 +275,41 @@ body {
 }
 
 .bar-label {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--text-muted);
 }
 
-/* Matrix Section */
+/* 2. 중앙 Habit Matrix 구획 (높이 가변) */
 .matrix-section {
-  padding: 20px;
-  overflow: hidden;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 0; /* flex 자식 스크롤 영역 문제 방지 */
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 .add-btn {
   background-color: var(--accent-color);
   color: #000;
   border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 10px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.add-btn:hover {
-  opacity: 0.9;
-}
-
-.add-btn:disabled {
-  background-color: #222;
-  color: #555;
-  cursor: not-allowed;
-  opacity: 0.6;
 }
 
 .matrix-wrapper {
+  flex: 1;
   overflow-x: auto;
+  overflow-y: auto;
   scrollbar-width: none;
 }
 
@@ -331,54 +320,53 @@ body {
 .matrix-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .matrix-table th, .matrix-table td {
-  padding: 6px 2px;
+  padding: 4px 1px;
   text-align: center;
-  min-width: 28px;
+  min-width: 24px;
 }
 
 .header-day-cell {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 1px;
 }
 
 .day-name {
-  font-size: 9px;
+  font-size: 8px;
   color: #444444;
   font-weight: 500;
-  text-transform: uppercase;
 }
 
 .day-number {
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .day-number.is-today-num {
   color: var(--accent-color);
   font-weight: 800;
   background-color: rgba(226, 241, 99, 0.15);
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 1px 4px;
+  border-radius: 3px;
 }
 
 .habit-col-head, .habit-name-td {
   text-align: left !important;
-  min-width: 160px !important;
+  min-width: 140px !important;
   color: #cccccc;
   font-weight: 500;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .habit-name-td {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-right: 12px;
+  padding-right: 8px;
 }
 
 .delete-btn {
@@ -386,7 +374,7 @@ body {
   border: none;
   color: #444;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 9px;
   display: none;
 }
 
@@ -394,132 +382,102 @@ body {
   display: inline-block;
 }
 
-.delete-btn:hover {
-  color: #ff453a;
-}
-
 .matrix-table th {
   color: var(--text-muted);
   font-weight: 500;
-  padding-bottom: 12px;
+  padding-bottom: 8px;
 }
 
-/* Matrix Cell States */
 .cell-btn {
-  width: 20px;
-  height: 20px;
-  border-radius: 4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
-  font-size: 11px;
-  transition: all 0.1s ease;
+  font-size: 10px;
   user-select: none;
   background-color: transparent;
   border: none;
 }
 
-.cell-btn.is-disabled {
-  cursor: default !important;
-}
+.cell-btn.status-completed { color: var(--accent-color); font-weight: bold; }
+.cell-btn.status-missed { background-color: var(--missed-bg); }
+.cell-btn.status-not-scheduled { color: #444444; font-size: 12px; }
+.cell-btn.status-upcoming { background-color: var(--empty-cell); border: 1px solid #1a1a1a; }
 
-.cell-btn.status-completed {
-  color: var(--accent-color);
-  font-weight: bold;
-}
-
-.cell-btn.status-missed {
-  background-color: var(--missed-bg);
-}
-
-.cell-btn.status-not-scheduled {
-  color: #444444;
-  font-size: 14px;
-}
-
-.cell-btn.status-upcoming {
-  background-color: var(--empty-cell);
-  border: 1px solid #1a1a1a;
-}
-
-/* Matrix Footer Legend */
 .matrix-footer {
-  margin-top: 16px;
+  margin-top: 8px;
   display: flex;
-  justify-content: flex-start;
 }
 
 .legend {
   display: flex;
-  gap: 16px;
-  font-size: 11px;
+  gap: 12px;
+  font-size: 10px;
   color: var(--text-muted);
 }
 
 .legend span {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .legend-icon {
-  font-style: normal;
+  width: 12px;
+  height: 12px;
+  font-size: 9px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 14px;
-  height: 14px;
-  font-size: 10px;
 }
 
 .legend-icon.icon-completed { color: var(--accent-color); font-weight: bold; }
-.legend-icon.icon-missed { background: var(--missed-bg); border-radius: 3px; }
-.legend-icon.icon-not-scheduled { color: #444; font-size: 14px; }
-.legend-icon.icon-upcoming { background: var(--empty-cell); border: 1px solid #1a1a1a; border-radius: 3px; }
+.legend-icon.icon-missed { background: var(--missed-bg); border-radius: 2px; }
+.legend-icon.icon-not-scheduled { color: #444; font-size: 12px; }
+.legend-icon.icon-upcoming { background: var(--empty-cell); border: 1px solid #1a1a1a; border-radius: 2px; }
 
-/* Consistency Trend Chart Labels */
+/* 3. 하단 Analytics 구획 */
+.analytics-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 10px;
+}
+
 .right-labels {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 .trend-label-item {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 10.5px;
-  font-weight: 400;
+  gap: 4px;
+  font-size: 9.5px;
   color: #ffffff;
 }
 
 .trend-dot {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   background-color: var(--accent-color);
   border-radius: 50%;
 }
 
-/* Analytics Grid */
-.analytics-grid {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr;
-  gap: 14px;
-}
-
 .chart-wrapper {
   position: relative;
-  height: 160px;
+  height: 110px; /* 차트 높이 축소로 전체 높이 딱 맞춤 */
   width: 100%;
 }
 
 .scroll-hidden {
-  max-height: 160px;
+  max-height: 110px;
   overflow-y: auto;
   scrollbar-width: none;
-  -ms-overflow-style: none;
 }
 
 .scroll-hidden::-webkit-scrollbar {
@@ -529,59 +487,58 @@ body {
 .analysis-list, .top-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .analysis-item {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .analysis-item-head {
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
+  font-size: 10px;
   color: #bbb;
 }
 
 .progress-bg {
   width: 100%;
-  height: 5px;
+  height: 4px;
   background-color: #181818;
-  border-radius: 3px;
+  border-radius: 2px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
   background-color: var(--accent-color);
-  border-radius: 3px;
-  transition: width 0.3s ease;
+  border-radius: 2px;
 }
 
 .top-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 10.5px;
 }
 
 .top-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .top-rank {
   color: var(--text-muted);
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
 }
 
 .top-stats {
   text-align: right;
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .top-percent {
@@ -590,6 +547,6 @@ body {
 }
 
 .top-count {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--text-muted);
 }
