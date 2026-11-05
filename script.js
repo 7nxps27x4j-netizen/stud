@@ -1,244 +1,541 @@
-let totalSeconds = 0;
-let timerInterval = null;
-let lastCheckTimestamp = Date.now(); // 마지막으로 체크한 시각
-
-let dailyData = JSON.parse(localStorage.getItem('studyData_V1')) || {};
-let hData = JSON.parse(localStorage.getItem('hData_V3')) || { 
-    names: Array(10).fill(""), 
-    checks: Array(10).fill().map(() => Array(31).fill(false)) 
-};
-let hChartObj = null;
-
-const quotes = [
-    "기적은 노력의 또 다른 이름이다.", 
-    "오늘 걷지 않으면 내일은 뛰어야 한다.",
-    "할 수 있다고 믿는 사람은 결국 그렇게 된다.", 
-    "가장 어두운 밤도 결국 끝나고 해가 뜰 것이다.",
-    "성공은 매일 반복되는 작은 노력의 합계다.",
-    "할 수 있다고 믿으면 이미 절반은 온 것이다.",
-    "당신의 노력이 오늘의 당신을 만든다.",
-    "내가 헛되이 보낸 오늘은 어제 죽은 이가 갈망하던 내일이다.",
-    "공부할 때의 고통은 잠깐이지만 못 배운 고통은 평생이다.",
-    "기적을 바라기보다 지금 당장 바뀌어야 한다.",
-    "성공은 끝이 아니며, 실패는 치명적이지 않습니다. 중요한 것은 계속해 나가는 용기이다.",
-    "완벽함은 도달할 수 없다. 하지만 완벽함을 쫓으면 우수함을 달성할 수 있다.",
-    "성공은 실패에서 실패로 넘어가면서도 열정을 잃지 않는 것이다.",
-    "목표 설정은 매력적인 미래를 만드는 비밀이다.",
-    "실패는 성공보다 더 많은 것을 가르쳐준다. 실패가 당신을 멈추게 하지 마라. 실패는 인격을 만든다.",
-    "생각을 모두 지금 하고 있는 일에 집중하라. 태양의 빛도 한 점에 모아야 불이 된다.",
-    "목표를 세우는 건 보이지 않는 것을 보이는 것으로 바꾸는 첫걸음이다.",
-    "자기 자신을 이기는 사람이 가장 강한 전사다.",
-    "현명한 사람은 가지지 못한 것 때문에 슬퍼하지 않고, 가진 것에 기뻐한다.",
-    "매일 아침 결단력을 가지고 일어나지 않으면, 만족감을 느끼고 잠자리에 들 수 없다.",
-    "교육은 세상을 바꿀 수 있는 가장 강력한 무기다.",
-    "가장 어려운 건 행동하기로 결정하는 것이다. 나머지는 단지 끈기일 뿐이다.",
-   "교육은 세상에서 유일하게 자유롭게 얻을 수 있는 것이다. 그리고 그것은 당신이 얼마든지 가져갈 수 있는 거의 유일한 것이다.",
-    "학생의 자세를 가져라. 질문하기에 너무 거만하지 말고, 새로운 걸 배우기엔 너무 많이 안다고 생각하지 마라.",
-    "당신의 발을 올바른 자리에 두고, 그다음에 단호히 서라.",
-    "완벽한 시간과 장소를 기다리지 마라. 당신은 이미 무대 위에 있다.",
-    "어려움이 클수록, 그것을 극복하는 영광도 더욱 커진다.",
-    "나는 학교 교육이 내 배움을 방해하도록 두지 않았다.",
-    "성공은 대개 그것을 찾을 겨를도 없이 바쁘게 일하는 사람에게 찾아온다.",
-    "가장 확실한 비결은 한 번 더 시도하는 것이다."
+const MONTH_NAMES = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
 ];
 
-window.onload = function() {
-    const savedStart = localStorage.getItem('timerStartTime');
-    if (savedStart) {
-        resumeTimer(parseInt(savedStart));
-    }
-    
-    changeQuote();
-    updateDisplay();
-    render2026Calendar();
-    updateSummary();
+const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-    // [강력 로직] 1초마다 백그라운드에서 돌아왔는지 감시 (Watchdog)
-    setInterval(() => {
-        const now = Date.now();
-        const savedStart = localStorage.getItem('timerStartTime');
-        
-        if (savedStart && timerInterval) {
-            // 마지막 체크 시간보다 2초 이상 차이 나면 "나갔다 왔다"고 판단
-            if (now - lastCheckTimestamp > 2000) {
-                const diff = Math.floor((now - parseInt(savedStart)) / 1000);
-                totalSeconds = diff;
-                document.getElementById('stopwatchDisplay').innerText = formatTime(totalSeconds);
-            }
+const now = new Date();
+const REAL_YEAR = now.getFullYear();
+const REAL_MONTH = now.getMonth();
+const REAL_DATE = now.getDate();
+
+let currentYear = REAL_YEAR;
+let currentMonth = REAL_MONTH;
+
+const STORAGE_KEY_MASTER = 'my_habits_master_list';
+const STORAGE_KEY_HISTORY = 'my_habits_history_snapshots';
+
+let habitsMaster = JSON.parse(localStorage.getItem(STORAGE_KEY_MASTER)) || [
+  { id: 1, name: 'Wake up at 06:00' },
+  { id: 2, name: 'Meditation' },
+  { id: 3, name: 'Gym' },
+  { id: 4, name: 'Cold shower' },
+  { id: 5, name: 'Deep work' },
+  { id: 6, name: 'Read 10 pages' },
+  { id: 7, name: 'Learn a skill' },
+  { id: 8, name: 'Sleep before 23:00' }
+];
+
+let historySnapshots = JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORY)) || {};
+
+let trendChartInstance = null;
+
+// CSS 루트 변수(--accent-color) 값을 가져오는 헬퍼 함수
+function getAccentColor() {
+  return getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+}
+
+function saveMaster() {
+  localStorage.setItem(STORAGE_KEY_MASTER, JSON.stringify(habitsMaster));
+}
+
+function saveSnapshots() {
+  localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(historySnapshots));
+}
+
+function getDaysInMonth(year, month) {
+  return new Date(year, month + 1, 0).getDate();
+}
+
+function getMonthSnapshot(year, month) {
+  const monthKey = `${year}-${month + 1}`;
+  if (!historySnapshots[monthKey]) {
+    historySnapshots[monthKey] = {};
+  }
+  return historySnapshots[monthKey];
+}
+
+function seedInitialSnapshot() {
+  const monthKey = `${REAL_YEAR}-${REAL_MONTH + 1}`;
+  if (!historySnapshots[monthKey] || Object.keys(historySnapshots[monthKey]).length === 0) {
+    const snap = {};
+    const daysInCurr = getDaysInMonth(REAL_YEAR, REAL_MONTH);
+
+    habitsMaster.forEach(h => {
+      snap[h.id] = {};
+      for (let day = 1; day <= daysInCurr; day++) {
+        const rand = Math.random();
+        if (rand > 0.5) snap[h.id][day] = 'completed';
+        else if (rand > 0.3) snap[h.id][day] = 'missed';
+        else if (rand > 0.15) snap[h.id][day] = 'not-scheduled';
+        else snap[h.id][day] = 'upcoming';
+      }
+    });
+
+    historySnapshots[monthKey] = snap;
+    saveSnapshots();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  seedInitialSnapshot();
+  initDateSelectors();
+  renderHeaderDays();
+  renderMatrix();
+  initChart();
+  updateAll();
+
+  document.getElementById('addHabitBtn').addEventListener('click', () => {
+    if (isHistoricalMonth()) return;
+
+    const name = prompt('새로운 습관명을 입력하세요:');
+    if (name && name.trim()) {
+      const newHabit = { id: Date.now(), name: name.trim() };
+      habitsMaster.push(newHabit);
+      saveMaster();
+      renderMatrix();
+      updateAll();
+    }
+  });
+});
+
+function isHistoricalMonth() {
+  if (currentYear < REAL_YEAR) return true;
+  if (currentYear === REAL_YEAR && currentMonth < REAL_MONTH) return true;
+  return false;
+}
+
+function initDateSelectors() {
+  const monthSelect = document.getElementById('monthSelect');
+  const yearSelect = document.getElementById('yearSelect');
+
+  monthSelect.innerHTML = '';
+  MONTH_NAMES.forEach((mName, idx) => {
+    const opt = document.createElement('option');
+    opt.value = idx;
+    opt.textContent = mName;
+    if (idx === currentMonth) opt.selected = true;
+    monthSelect.appendChild(opt);
+  });
+
+  yearSelect.innerHTML = '';
+  const opt = document.createElement('option');
+  opt.value = 2026;
+  opt.textContent = '2026';
+  opt.selected = true;
+  yearSelect.appendChild(opt);
+
+  monthSelect.addEventListener('change', (e) => {
+    currentMonth = parseInt(e.target.value);
+    onDateChange();
+  });
+
+  yearSelect.addEventListener('change', (e) => {
+    currentYear = parseInt(e.target.value);
+    onDateChange();
+  });
+}
+
+function onDateChange() {
+  renderHeaderDays();
+  renderMatrix();
+  updateAll();
+}
+
+function renderHeaderDays() {
+  const tr = document.getElementById('matrixHeaderDays');
+  tr.innerHTML = '<th class="habit-col-head">MY HABITS</th>';
+
+  const daysCount = getDaysInMonth(currentYear, currentMonth);
+  const isRealCurrentMonth = (currentYear === REAL_YEAR && currentMonth === REAL_MONTH);
+
+  for (let day = 1; day <= daysCount; day++) {
+    const th = document.createElement('th');
+    const dateObj = new Date(currentYear, currentMonth, day);
+    const dayName = DAY_NAMES[dateObj.getDay()];
+    const isToday = (isRealCurrentMonth && day === REAL_DATE);
+
+    th.innerHTML = `
+      <div class="header-day-cell">
+        <span class="day-name">${dayName}</span>
+        <span class="day-number ${isToday ? 'is-today-num' : ''}">${day}</span>
+      </div>
+    `;
+    tr.appendChild(th);
+  }
+
+  const monthTagText = MONTH_NAMES[currentMonth].toUpperCase();
+  document.getElementById('chartMonthTag').textContent = monthTagText;
+  document.getElementById('analysisMonthTag').textContent = monthTagText;
+  document.getElementById('topMonthTag').textContent = monthTagText;
+
+  const isHistory = isHistoricalMonth();
+  document.getElementById('readOnlyBadge').style.display = isHistory ? 'inline-block' : 'none';
+  document.getElementById('addHabitBtn').disabled = isHistory;
+}
+
+function renderMatrix() {
+  const tbody = document.getElementById('matrixBody');
+  tbody.innerHTML = '';
+
+  const daysCount = getDaysInMonth(currentYear, currentMonth);
+  const isHistory = isHistoricalMonth();
+  const snapshot = getMonthSnapshot(currentYear, currentMonth);
+
+  let activeHabitsList = habitsMaster;
+  if (isHistory && Object.keys(snapshot).length > 0) {
+    const savedIds = Object.keys(snapshot).map(Number);
+    activeHabitsList = habitsMaster.filter(h => savedIds.includes(h.id));
+    savedIds.forEach(id => {
+      if (!activeHabitsList.some(h => h.id === id)) {
+        activeHabitsList.push({ id, name: `Habit #${id}` });
+      }
+    });
+  }
+
+  activeHabitsList.forEach((habit) => {
+    const tr = document.createElement('tr');
+
+    const nameTd = document.createElement('td');
+    nameTd.className = 'habit-name-td';
+    nameTd.innerHTML = `
+      <span>${habit.name}</span>
+      ${!isHistory ? `<button class="delete-btn" onclick="deleteHabit(${habit.id})">✕</button>` : ''}
+    `;
+    tr.appendChild(nameTd);
+
+    if (!snapshot[habit.id]) snapshot[habit.id] = {};
+
+    for (let day = 1; day <= daysCount; day++) {
+      const td = document.createElement('td');
+      const btn = document.createElement('div');
+      btn.className = 'cell-btn';
+
+      if (isHistory) btn.classList.add('is-disabled');
+
+      const status = snapshot[habit.id][day] || 'upcoming';
+
+      if (status === 'completed') {
+        btn.classList.add('status-completed');
+        btn.textContent = '✓';
+      } else if (status === 'missed') {
+        btn.classList.add('status-missed');
+        btn.textContent = '';
+      } else if (status === 'not-scheduled') {
+        btn.classList.add('status-not-scheduled');
+        btn.textContent = '•';
+      } else {
+        btn.classList.add('status-upcoming');
+        btn.textContent = '';
+      }
+
+      if (!isHistory) {
+        btn.addEventListener('click', () => {
+          const cur = snapshot[habit.id][day] || 'upcoming';
+          if (cur === 'completed') snapshot[habit.id][day] = 'missed';
+          else if (cur === 'missed') snapshot[habit.id][day] = 'not-scheduled';
+          else if (cur === 'not-scheduled') snapshot[habit.id][day] = 'upcoming';
+          else snapshot[habit.id][day] = 'completed';
+
+          saveSnapshots();
+          renderMatrix();
+          updateAll();
+        });
+      }
+
+      td.appendChild(btn);
+      tr.appendChild(td);
+    }
+
+    tbody.appendChild(tr);
+  });
+}
+
+function deleteHabit(id) {
+  if (isHistoricalMonth()) return;
+
+  if (confirm('이 습관을 삭제하시겠습니까?')) {
+    habitsMaster = habitsMaster.filter(h => h.id !== id);
+    saveMaster();
+    renderMatrix();
+    updateAll();
+  }
+}
+
+function updateAll() {
+  const daysCount = getDaysInMonth(currentYear, currentMonth);
+  const snapshot = getMonthSnapshot(currentYear, currentMonth);
+  const activeHabitsList = Object.keys(snapshot);
+  const totalHabitsCount = activeHabitsList.length || habitsMaster.length;
+
+  document.getElementById('activeHabitsCount').textContent = totalHabitsCount;
+  document.getElementById('daysTracked').textContent = daysCount;
+
+  const isRealCurrentMonth = (currentYear === REAL_YEAR && currentMonth === REAL_MONTH);
+  const activeToday = isRealCurrentMonth ? REAL_DATE : 1;
+
+  let todayDone = 0;
+  let todayActiveScheduled = 0;
+
+  Object.keys(snapshot).forEach(hId => {
+    const st = snapshot[hId][activeToday] || 'upcoming';
+    if (st !== 'not-scheduled') {
+      todayActiveScheduled++;
+      if (st === 'completed') todayDone++;
+    }
+  });
+
+  const todayPercent = todayActiveScheduled ? Math.round((todayDone / todayActiveScheduled) * 100) : 0;
+  document.getElementById('todayPercent').textContent = `${todayPercent}%`;
+  document.getElementById('todaySub').textContent = `${todayDone}/${todayActiveScheduled} habits`;
+  setRingProgress('todayRing', todayPercent);
+
+  const weeklyContainer = document.getElementById('weeklyBars');
+  weeklyContainer.innerHTML = '';
+  const dayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  let weekDoneSum = 0;
+
+  const startDay = Math.max(1, activeToday - 3);
+  const accentColor = getAccentColor();
+
+  dayLabels.forEach((label, idx) => {
+    const targetDay = Math.min(daysCount, startDay + idx);
+    let doneInDay = 0;
+    let scheduledInDay = 0;
+
+    Object.keys(snapshot).forEach(hId => {
+      const st = snapshot[hId][targetDay] || 'upcoming';
+      if (st !== 'not-scheduled') {
+        scheduledInDay++;
+        if (st === 'completed') doneInDay++;
+      }
+    });
+
+    const dayPct = scheduledInDay ? (doneInDay / scheduledInDay) * 100 : 0;
+    weekDoneSum += dayPct;
+
+    const isTodayBar = (isRealCurrentMonth && targetDay === REAL_DATE);
+    const barColor = isTodayBar ? accentColor : '#444444';
+
+    const col = document.createElement('div');
+    col.className = 'bar-col';
+    col.innerHTML = `
+      <div class="bar-bg">
+        <div class="bar-fill" style="height: ${dayPct}%; background-color: ${barColor};"></div>
+      </div>
+      <span class="bar-label">${label}</span>
+    `;
+    weeklyContainer.appendChild(col);
+  });
+
+  const avgWeekPct = Math.round(weekDoneSum / 7);
+  document.getElementById('weekPercent').textContent = `${avgWeekPct}%`;
+
+  let totalScheduledInMonth = 0;
+  let totalCompletedInMonth = 0;
+  let perfectDays = 0;
+
+  for (let d = 1; d <= daysCount; d++) {
+    let dayDone = 0;
+    let dayScheduled = 0;
+
+    Object.keys(snapshot).forEach(hId => {
+      const st = snapshot[hId][d] || 'upcoming';
+      if (st !== 'not-scheduled') {
+        dayScheduled++;
+        if (st === 'completed') {
+          totalCompletedInMonth++;
+          dayDone++;
         }
-        lastCheckTimestamp = now;
-    }, 1000);
-};
-
-function startTimer() {
-    // 공부를 시작한 시점의 '절대 시각'을 브라우저에 박제합니다.
-    const startTime = Date.now() - (totalSeconds * 1000);
-    localStorage.setItem('timerStartTime', startTime.toString());
-    lastCheckTimestamp = Date.now();
-
-    document.getElementById('startBtn').disabled = true;
-    document.getElementById('stopBtn').disabled = false;
-    
-    if (timerInterval) clearInterval(timerInterval);
-    timerInterval = setInterval(() => {
-        totalSeconds++;
-        document.getElementById('stopwatchDisplay').innerText = formatTime(totalSeconds);
-    }, 1000);
-}
-
-function resumeTimer(startTime) {
-    const now = Date.now();
-    totalSeconds = Math.floor((now - startTime) / 1000);
-    lastCheckTimestamp = now;
-    
-    document.getElementById('startBtn').disabled = true;
-    document.getElementById('stopBtn').disabled = false;
-    
-    if (timerInterval) clearInterval(timerInterval);
-    timerInterval = setInterval(() => {
-        totalSeconds++;
-        document.getElementById('stopwatchDisplay').innerText = formatTime(totalSeconds);
-    }, 1000);
-}
-
-function stopTimer() {
-    clearInterval(timerInterval);
-    timerInterval = null;
-    localStorage.removeItem('timerStartTime');
-
-    const today = getTodayStr();
-    const subject = document.getElementById('subjectSelect').value;
-    if (!dailyData[today]) dailyData[today] = { total: 0, subjects: {} };
-    
-    dailyData[today].total += totalSeconds;
-    dailyData[today].subjects[subject] = (dailyData[today].subjects[subject] || 0) + totalSeconds;
-    
-    localStorage.setItem('studyData_V1', JSON.stringify(dailyData));
-    
-    totalSeconds = 0;
-    document.getElementById('stopwatchDisplay').innerText = "00:00:00";
-    document.getElementById('startBtn').disabled = false;
-    document.getElementById('stopBtn').disabled = true;
-    
-    updateDisplay();
-    render2026Calendar();
-    updateSummary();
-}
-
-// --- 아래 보조 함수들은 그대로 유지 ---
-function formatTime(s) {
-    const h = Math.floor(s / 3600);
-    const m = Math.floor((s % 3600) / 60);
-    const sc = s % 60;
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sc).padStart(2, '0')}`;
-}
-function getTodayStr() {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
-function changeQuote() {
-    const quoteElement = document.querySelector('.quote-text');
-    if (quoteElement) {
-        const randomIndex = Math.floor(Math.random() * quotes.length);
-        quoteElement.innerText = `"${quotes[randomIndex]}"`;
-    }
-}
-function updateDisplay() {
-    const today = getTodayStr();
-    const data = dailyData[today] || { subjects: {} };
-    const list = document.getElementById('subjectTimeList');
-    list.innerHTML = "";
-    ['국어', '수학', '영어', '과학'].forEach(sub => {
-        const time = data.subjects[sub] || 0;
-        list.innerHTML += `<li><span>${sub}</span><strong>${formatTime(time)}</strong></li>`;
+      }
     });
-}
-function updateSummary() {
-    const todayStr = getTodayStr();
-    document.getElementById('todayTime').innerText = formatTime(dailyData[todayStr]?.total || 0);
-    let monthTotal = 0;
-    const currentMonthPrefix = todayStr.substring(0, 7);
-    for(const date in dailyData) {
-        if(date.startsWith(currentMonthPrefix)) monthTotal += dailyData[date].total;
+
+    totalScheduledInMonth += dayScheduled;
+
+    if (dayScheduled > 0 && dayDone === dayScheduled) {
+      perfectDays++;
     }
-    document.getElementById('monthTime').innerText = formatTime(monthTotal);
-    let streak = 0; let checkDate = new Date();
-    while (true) {
-        let dStr = `${checkDate.getFullYear()}-${String(checkDate.getMonth() + 1).padStart(2, '0')}-${String(checkDate.getDate()).padStart(2, '0')}`;
-        if (dailyData[dStr] && dailyData[dStr].total > 0) {
-            streak++; checkDate.setDate(checkDate.getDate() - 1);
-        } else break;
-    }
-    document.getElementById('streakCount').innerText = `${streak}일`;
+  }
+
+  const monthPercent = totalScheduledInMonth ? Math.round((totalCompletedInMonth / totalScheduledInMonth) * 100) : 0;
+  document.getElementById('monthPercent').textContent = `${monthPercent}%`;
+  document.getElementById('monthSub').textContent = `${totalCompletedInMonth} of ${totalScheduledInMonth} scheduled`;
+  document.getElementById('perfectDays').textContent = perfectDays;
+  document.getElementById('avgDone').textContent = (totalCompletedInMonth / daysCount).toFixed(1);
+
+  setRingProgress('monthRing', monthPercent);
+
+  renderAnalysis();
+  renderTopHabits();
+  updateChartData();
 }
-function render2026Calendar() {
-    const container = document.getElementById('grassContainer');
-    if(!container) return; container.innerHTML = "";
-    const year = 2026, month = new Date().getMonth();
-    const firstDay = new Date(year, month, 1).getDay();
-    const lastDate = new Date(year, month + 1, 0).getDate();
-    document.getElementById('monthTitle').innerText = `2026년 ${month + 1}월`;
-    for (let i = 0; i < firstDay; i++) container.appendChild(document.createElement('div'));
-    for (let d = 1; d <= lastDate; d++) {
-        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-        const time = dailyData[dateStr]?.total || 0;
-        const cell = document.createElement('div');
-        cell.className = 'grass-cell';
-        if (time > 0) cell.classList.add(`lv-${Math.min(5, Math.ceil(time/3600))}`);
-        cell.innerHTML = `<span class="cell-date">${d}</span>`;
-        if(time > 0) {
-            const h = Math.floor(time / 3600);
-            const m = Math.floor((time % 3600) / 60);
-            const s = time % 60;
-            let displayTime = h > 0 ? `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}` : `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-            cell.innerHTML += `<span class="cell-time-text">${displayTime}</span>`;
+
+function setRingProgress(elementId, percent) {
+  const circle = document.getElementById(elementId);
+  if (!circle) return;
+  const circumference = 2 * Math.PI * 38;
+  const offset = circumference - (percent / 100) * circumference;
+  circle.style.strokeDashoffset = offset;
+}
+
+function renderAnalysis() {
+  const container = document.getElementById('analysisList');
+  container.innerHTML = '';
+  const daysCount = getDaysInMonth(currentYear, currentMonth);
+  const snapshot = getMonthSnapshot(currentYear, currentMonth);
+
+  habitsMaster.forEach(h => {
+    let done = 0;
+    let scheduled = 0;
+
+    if (snapshot[h.id]) {
+      for (let d = 1; d <= daysCount; d++) {
+        const st = snapshot[h.id][d] || 'upcoming';
+        if (st !== 'not-scheduled') {
+          scheduled++;
+          if (st === 'completed') done++;
         }
-        container.appendChild(cell);
+      }
     }
+
+    const percent = scheduled ? Math.round((done / scheduled) * 100) : 0;
+
+    const item = document.createElement('div');
+    item.className = 'analysis-item';
+    item.innerHTML = `
+      <div class="analysis-item-head">
+        <span>${h.name}</span>
+        <span>${percent}%</span>
+      </div>
+      <div class="progress-bg">
+        <div class="progress-fill" style="width: ${percent}%;"></div>
+      </div>
+    `;
+    container.appendChild(item);
+  });
 }
-function toggleMenu() { document.getElementById('side-menu').classList.toggle('open'); }
-function showPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-    document.getElementById(id + '-page').style.display = 'block';
-    changeQuote();
-    if(id === 'habit') renderH();
-    toggleMenu();
-}
-function toggleTheme() {
-    document.body.classList.toggle('light-mode');
-    document.body.classList.toggle('dark-mode');
-    if(document.getElementById('habit-page').style.display === 'block') upHChart();
-}
-function renderH() {
-    const head = document.getElementById('h-date-row');
-    if(head.children.length === 1) { for(let i=1; i<=31; i++) head.innerHTML += `<th>${i}</th>`; }
-    const body = document.getElementById('h-body'); body.innerHTML = '';
-    for(let i=0; i<10; i++) {
-        let tr = document.createElement('tr');
-        tr.innerHTML = `<td><input class="h-input" value="${hData.names[i]}" onchange="svH(${i},'n',this.value)" placeholder="습관 입력..."></td>`;
-        for(let j=0; j<31; j++) tr.innerHTML += `<td><input type="checkbox" ${hData.checks[i][j]?'checked':''} onchange="svH(${i},${j},this.checked)"></td>`;
-        body.appendChild(tr);
+
+function renderTopHabits() {
+  const container = document.getElementById('topList');
+  container.innerHTML = '';
+  const daysCount = getDaysInMonth(currentYear, currentMonth);
+  const snapshot = getMonthSnapshot(currentYear, currentMonth);
+
+  const list = habitsMaster.map(h => {
+    let done = 0;
+    let scheduled = 0;
+
+    if (snapshot[h.id]) {
+      for (let d = 1; d <= daysCount; d++) {
+        const st = snapshot[h.id][d] || 'upcoming';
+        if (st !== 'not-scheduled') {
+          scheduled++;
+          if (st === 'completed') done++;
+        }
+      }
     }
-    setTimeout(upHChart, 50);
+    return {
+      name: h.name,
+      done,
+      scheduled,
+      percent: scheduled ? Math.round((done / scheduled) * 100) : 0
+    };
+  }).sort((a, b) => b.done - a.done);
+
+  list.slice(0, 5).forEach((item, index) => {
+    const row = document.createElement('div');
+    row.className = 'top-item';
+    row.innerHTML = `
+      <div class="top-left">
+        <span class="top-rank">0${index + 1}</span>
+        <span>${item.name}</span>
+      </div>
+      <div class="top-stats">
+        <span class="top-percent">${item.percent}%</span>
+        <div class="top-count">${item.done}/${item.scheduled || daysCount}</div>
+      </div>
+    `;
+    container.appendChild(row);
+  });
 }
-function svH(r, c, v) {
-    if(c === 'n') hData.names[r] = v; else hData.checks[r][c] = v;
-    localStorage.setItem('hData_V3', JSON.stringify(hData));
-    upHChart();
+
+function initChart() {
+  const ctx = document.getElementById('trendChart').getContext('2d');
+  const accentColor = getAccentColor();
+
+  trendChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'Daily completion',
+        data: [],
+        borderColor: accentColor, // CSS 변수와 연동된 라인 색상
+        borderWidth: 2,
+        tension: 0.35,
+        pointRadius: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#555', font: { size: 9 } } },
+        y: {
+          min: 0,
+          max: 100,
+          ticks: {
+            color: '#555',
+            font: { size: 9 },
+            stepSize: 50,
+            callback: v => v + '%'
+          },
+          grid: { color: '#161616' }
+        }
+      }
+    }
+  });
 }
-function upHChart() {
-    const ctx = document.getElementById('h-chart').getContext('2d');
-    const isDark = document.body.classList.contains('dark-mode');
-    const scores = Array(31).fill(0).map((_, d) => {
-        let cnt = 0; for(let i=0; i<10; i++) if(hData.checks[i][d]) cnt++; return cnt;
+
+function updateChartData() {
+  if (!trendChartInstance) return;
+
+  // 차트 생성 후 색상도 최신 CSS 변수값으로 동기화
+  trendChartInstance.data.datasets[0].borderColor = getAccentColor();
+
+  const daysCount = getDaysInMonth(currentYear, currentMonth);
+  const snapshot = getMonthSnapshot(currentYear, currentMonth);
+
+  const targetDays = [1, 5, 10, 15, 20, 25];
+  if (daysCount <= 29) {
+    targetDays.push(daysCount);
+  } else {
+    targetDays.push(30);
+  }
+
+  const labels = [];
+  const data = [];
+
+  targetDays.forEach(d => {
+    labels.push(d);
+    let done = 0;
+    let scheduled = 0;
+
+    Object.keys(snapshot).forEach(hId => {
+      const st = snapshot[hId][d] || 'upcoming';
+      if (st !== 'not-scheduled') {
+        scheduled++;
+        if (st === 'completed') done++;
+      }
     });
-    if(hChartObj) hChartObj.destroy();
-    hChartObj = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: Array.from({length:31}, (_, i) => i+1),
-            datasets: [{ label: '완료', data: scores, borderColor: '#f97316', backgroundColor: 'rgba(249,115,22,0.1)', fill: true, tension: 0.3 }]
-        },
-        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 10, ticks: {color: isDark ? '#ccc' : '#666'} }, x: { ticks: {color: isDark ? '#ccc' : '#666'} } } }
-    });
+
+    const pct = scheduled ? Math.round((done / scheduled) * 100) : 0;
+    data.push(pct);
+  });
+
+  trendChartInstance.data.labels = labels;
+  trendChartInstance.data.datasets[0].data = data;
+  trendChartInstance.update();
 }
